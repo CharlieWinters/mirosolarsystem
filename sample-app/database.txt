@@ -1,2 +1,12 @@
 [
+	{
+		"account_id": "3074457360503663887",
+		"user_id": "3074457360503968619",
+		"expires_in": 0,
+		"refresh_token": null,
+		"access_token": "8KlyI1hu4KJWfVdhuBKp4kiSXkg",
+		"scope": "boards:write boards:read",
+		"team_id": "3074457360503663887",
+		"token_type": "bearer"
+	}
 ]
