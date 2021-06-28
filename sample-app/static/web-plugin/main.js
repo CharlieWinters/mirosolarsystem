@@ -17,7 +17,7 @@ miro.onReady(() => {
 
           const max_radius = Math.max(...radi)
         
-          const waitOneSec = () => new Promise(r => setTimeout(r, 100))
+          const waitOneSec = () => new Promise(r => setTimeout(r, 10))
 
           
           let i = 0
@@ -31,6 +31,7 @@ miro.onReady(() => {
                 return
               }
               
+              const speed = max_radius/solarObject.radius*.1
   
               let x_orbit = solarObjects[solarObject.orbit].static ? solarObjects[solarObject.orbit].x : solarObjects[solarObject.orbit].current_x
               let y_orbit = solarObjects[solarObject.orbit].static ? solarObjects[solarObject.orbit].y : solarObjects[solarObject.orbit].current_y
@@ -38,7 +39,7 @@ miro.onReady(() => {
               
   
   
-              const coord = orbit(x_orbit, y_orbit, solarObject.radius, solarObject.starting_angle + i)
+              const coord = orbit(x_orbit, y_orbit, solarObject.radius, solarObject.current_angle + speed)
               x = coord[0]
               y = coord[1]
               //await waitOneSec()
@@ -46,6 +47,7 @@ miro.onReady(() => {
               miro.board.widgets.update({id: solarObject.id, x: x, y: y})
               solarObjects[solarObject.id]['current_x'] = x
               solarObjects[solarObject.id]['current_y'] = y
+              solarObjects[solarObject.id]['current_angle'] = solarObject.current_angle + speed
               i=i+.1
             })
             
@@ -81,7 +83,7 @@ function createSolarSystem(images, lines){
 
     let radius = Math.hypot(delta_x, delta_y)
 
-    solarObjects[line.startWidgetId]['starting_angle'] = Math.atan2(delta_y, delta_x) 
+    solarObjects[line.startWidgetId]['current_angle'] = Math.atan2(delta_y, delta_x) 
     solarObjects[line.startWidgetId]['radius'] = radius
     solarObjects[line.startWidgetId]['speed'] = (2*Math.PI*500)/radius
   })
