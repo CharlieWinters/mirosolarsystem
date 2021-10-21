@@ -8,5 +8,14 @@
 		"scope": "boards:write boards:read",
 		"team_id": "3074457360503663887",
 		"token_type": "bearer"
+	},
+	{
+		"account_id": "3074457365221835878",
+		"user_id": "3074457364897163038",
+		"expires_in": 0,
+		"team_id": "3074457365221835878",
+		"access_token": "Avo9vC-0dLfAvTd8YvamDN7WMzY",
+		"scope": "boards:write boards:read",
+		"token_type": "bearer"
 	}
 ]

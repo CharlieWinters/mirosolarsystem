@@ -10,8 +10,12 @@ miro.onReady(() => {
           debugger
           let allImages = await miro.board.widgets.get({type: 'image'})
           let allLines = await miro.board.widgets.get({type: 'line'})
+          allLines.forEach(s => {
+            s.clientVisible = false
+          })
+          await miro.board.widgets.update(allLines)
 
-          let solarObjects = createSolarSystem(allImages, allLines)
+          let solarObjects = await createSolarSystem(allImages, allLines)
 
           const radi = Object.values(solarObjects).map(solarObject => solarObject.radius || 0)
 
@@ -21,8 +25,8 @@ miro.onReady(() => {
 
           
           let i = 0
-          //while (i < 2*Math.PI){
-          while (true){
+          while (i < 60){
+          //while (true){
 
             
             await waitOneSec()
@@ -48,10 +52,16 @@ miro.onReady(() => {
               solarObjects[solarObject.id]['current_x'] = x
               solarObjects[solarObject.id]['current_y'] = y
               solarObjects[solarObject.id]['current_angle'] = solarObject.current_angle + speed
-              i=i+.1
+              i=i+1
             })
             
           }
+          let allShapes = await miro.board.widgets.get({type: 'shape'})
+          await miro.board.widgets.deleteById(allShapes.map(shape => shape.id))
+          allLines.forEach(s => {
+            s.clientVisible = true
+          })
+          miro.board.widgets.update(allLines)
         },
       },
     },
@@ -65,10 +75,10 @@ async function getDynamicPosition(id){
   return [x_orbit, y_orbit]
 }
 
-function createSolarSystem(images, lines){
+async function createSolarSystem(images, lines){
   let solarObjects = {}
   images.map(image => solarObjects[image.id] = {id: image.id, static: true, x:image.x, y:image.y, current_x:image.x, current_y:image.y, radius: 0})
-  lines.map(line => {
+  lines.map(async (line) => {
     solarObjects[line.startWidgetId]['orbit'] = line.endWidgetId
     solarObjects[line.startWidgetId]['static'] = false
 
@@ -86,6 +96,12 @@ function createSolarSystem(images, lines){
     solarObjects[line.startWidgetId]['current_angle'] = Math.atan2(delta_y, delta_x) 
     solarObjects[line.startWidgetId]['radius'] = radius
     solarObjects[line.startWidgetId]['speed'] = (2*Math.PI*500)/radius
+    const orbitPerimeter = await miro.board.widgets.create({type: 'shape', x: x_orbit, y: y_orbit, width: 2*radius, height: 2*radius, style: {shapeType: 4}})
+
+    if (!solarObjects[line.endWidgetId]['static']){
+      solarObjects[orbitPerimeter[0].id] = Object.assign({}, solarObjects[line.endWidgetId])
+      solarObjects[orbitPerimeter[0].id].id = orbitPerimeter[0].id
+    } 
   })
   return solarObjects
 }
